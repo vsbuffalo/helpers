@@ -1,0 +1,41 @@
+#!/bin/bash
+# AICODE: Written with the help of ChatGPT.
+
+# Usage: ./enable-protect-main.sh /path/to/git/repo
+
+HOOK_CONTENT='#!/bin/sh
+branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
+  echo "🚫 Push to '\''$branch'\'' is blocked. Use a feature branch and PR instead."
+  exit 1
+fi
+'
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 /path/to/repo"
+  exit 1
+fi
+
+REPO_DIR="$1"
+HOOK_PATH="$REPO_DIR/.git/hooks/pre-push"
+
+# Check if it's a valid Git repo
+if [ ! -d "$REPO_DIR/.git" ]; then
+  echo "❌ Error: $REPO_DIR is not a Git repository."
+  exit 1
+fi
+
+# Check if pre-push hook already exists
+if [ -f "$HOOK_PATH" ]; then
+  echo "⚠️  A pre-push hook already exists at $HOOK_PATH"
+  echo "❌ Aborting to avoid overwriting it."
+  echo "💡 You can back it up, delete it, or merge manually if needed."
+  exit 1
+fi
+
+# Write the new hook
+echo "$HOOK_CONTENT" > "$HOOK_PATH"
+chmod +x "$HOOK_PATH"
+
+echo "✅ pre-push hook installed successfully in $REPO_DIR"
+
