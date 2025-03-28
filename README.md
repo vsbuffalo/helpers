@@ -53,3 +53,33 @@ Example output:
 ✅ pre-push hook installed successfully in .
 ```
 
+
+### Azure CLI Helpers
+
+ - `az-list-vms`: Lists available Azure VM sizes in a given region with pretty
+   table output. Supports sorting and slicing. 
+
+
+#### 🔧 Usage
+
+```
+az-list-vms                            # Defaults to westus, all sizes
+az-list-vms --location eastus2
+az-list-vms --sort MemoryGB            # Sorts by MemoryGB
+az-list-vms --sort Cores --head 5      # Fewest core machines
+az-list-vms --sort DiskGB --tail 10    # Machines with largest disk space
+```
+
+An example: find the VMs with the most cores:
+
+
+```
+$ az-list-vms --sort MemoryGB --tail 5
+Name              Cores  MemoryGB  DiskGB
+Standard_E96_v5   96     672       0
+Standard_E104i_v5 104    672       0
+Standard_M208ms   208    5700      4096
+```
+
+Perfect for quickly exploring what VM types are available in a region before
+creating analysis infrastructure or spinning up experiments.
